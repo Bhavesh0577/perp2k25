@@ -2,7 +2,9 @@
 const nextConfig = {
   // Enable experimental server actions
   experimental: {
-    serverActions: true,
+    serverActions: {
+      allowedOrigins: ["localhost:3000"]
+    },
   },
   eslint: {
     // Disable ESLint during builds
