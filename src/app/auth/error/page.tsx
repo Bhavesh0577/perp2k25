@@ -12,7 +12,7 @@ export default function AuthErrorPage() {
   const [errorMessage, setErrorMessage] = useState<string>('An unknown error occurred');
   
   useEffect(() => {
-    const error = searchParams.get('error');
+    const error = searchParams?.get('error');
     
     if (error) {
       switch (error) {
