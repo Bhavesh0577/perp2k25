@@ -7,12 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { toast } from 'sonner';
-
-// In a real application, this would come from authentication
-const MOCK_USER = {
-  id: 'user-1',
-  name: 'Current User',
-};
+import { io, Socket } from 'socket.io-client';
+import { useUser } from '@clerk/nextjs';
 
 // In a real application, this would be selected by the user
 const MOCK_TEAM_ID = 'team-1';
@@ -30,11 +26,75 @@ export default function TeamChatPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [teamId, setTeamId] = useState(MOCK_TEAM_ID);
-  const [senderName, setSenderName] = useState(MOCK_USER.name);
+  const [senderName, setSenderName] = useState('');
   const [isInitializing, setIsInitializing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
+  const { user, isLoaded } = useUser();
 
-  // Fetch messages on mount and periodically
+  // Set up Socket.io connection
+  useEffect(() => {
+    // Initialize socket connection
+    const socketInstance = io(process.env.NEXT_PUBLIC_SOCKET_URL || window.location.origin, {
+      path: '/api/socketio',
+    });
+
+    // Set up Socket.io event listeners
+    socketInstance.on('connect', () => {
+      console.log('Socket.io connected');
+      setIsConnected(true);
+      
+      // Join the team room
+      socketInstance.emit('join-team', teamId);
+    });
+
+    socketInstance.on('disconnect', () => {
+      console.log('Socket.io disconnected');
+      setIsConnected(false);
+    });
+
+    socketInstance.on('connect_error', (err) => {
+      console.error('Socket.io connection error:', err);
+      toast.error('Chat connection failed. Trying to reconnect...');
+    });
+
+    // Listen for new messages
+    socketInstance.on('new-message', (message: Message) => {
+      setMessages(prevMessages => {
+        // Check if message already exists (avoid duplicates)
+        if (prevMessages.some(msg => msg.id === message.id)) {
+          return prevMessages;
+        }
+        return [...prevMessages, message];
+      });
+    });
+
+    // Store socket instance
+    setSocket(socketInstance);
+
+    // Clean up on unmount
+    return () => {
+      console.log('Disconnecting socket');
+      socketInstance.off('new-message');
+      socketInstance.off('connect');
+      socketInstance.off('disconnect');
+      socketInstance.off('connect_error');
+      
+      // Leave the team room
+      socketInstance.emit('leave-team', teamId);
+      socketInstance.disconnect();
+    };
+  }, [teamId]);
+
+  // Set user name when Clerk user is loaded
+  useEffect(() => {
+    if (isLoaded && user) {
+      setSenderName(user.fullName || user.firstName || user.username || 'Anonymous User');
+    }
+  }, [isLoaded, user]);
+
+  // Fetch initial messages on mount
   useEffect(() => {
     const fetchMessages = async () => {
       try {
@@ -57,44 +117,28 @@ export default function TeamChatPage() {
 
     // Initial fetch
     fetchMessages();
-
-    // Poll for new messages every 3 seconds
-    const interval = setInterval(fetchMessages, 3000);
-
-    // Clean up on unmount
-    return () => clearInterval(interval);
   }, [teamId]);
 
   const sendMessage = async (messageText: string) => {
-    if (!messageText.trim()) return;
+    if (!messageText.trim() || !socket || !isConnected) return;
 
     try {
+      const userId = user?.id || 'anonymous';
+      
       const newMessage = {
+        id: `msg_${Date.now()}`,
         teamId,
-        sender: MOCK_USER.id,
+        sender: userId,
         senderName,
         message: messageText,
+        createdAt: new Date().toISOString(),
       };
 
-      const response = await fetch('/api/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newMessage),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to send message');
-      }
-
-      // Immediately refresh messages
-      const refreshResponse = await fetch(`/api/messages?teamId=${teamId}`);
-      if (refreshResponse.ok) {
-        const data = await refreshResponse.json();
-        setMessages(data.messages || []);
-      }
+      // Emit the message via Socket.io
+      socket.emit('send-message', newMessage);
+      
+      // Optimistically add message to UI
+      setMessages(prevMessages => [...prevMessages, newMessage]);
     } catch (error) {
       console.error('Error sending message:', error);
       toast.error('Failed to send message');
@@ -102,7 +146,14 @@ export default function TeamChatPage() {
   };
 
   const handleTeamChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTeamId(e.target.value);
+    const newTeamId = e.target.value;
+    setTeamId(newTeamId);
+    
+    // Leave the current team room and join the new one
+    if (socket && isConnected) {
+      socket.emit('leave-team', teamId);
+      socket.emit('join-team', newTeamId);
+    }
   };
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -143,6 +194,24 @@ export default function TeamChatPage() {
           <p className="text-muted-foreground">
             Collaborate in real-time with your team members
           </p>
+          {isConnected && (
+            <div className="mt-1 flex items-center">
+              <div className="h-2 w-2 rounded-full bg-green-500 mr-2"></div>
+              <span className="text-xs text-muted-foreground">Connected</span>
+            </div>
+          )}
+          {!isConnected && loading && (
+            <div className="mt-1 flex items-center">
+              <div className="h-2 w-2 rounded-full bg-amber-500 mr-2"></div>
+              <span className="text-xs text-muted-foreground">Connecting...</span>
+            </div>
+          )}
+          {!isConnected && !loading && (
+            <div className="mt-1 flex items-center">
+              <div className="h-2 w-2 rounded-full bg-red-500 mr-2"></div>
+              <span className="text-xs text-muted-foreground">Disconnected</span>
+            </div>
+          )}
         </div>
         
         <div className="flex space-x-3">
@@ -196,7 +265,7 @@ export default function TeamChatPage() {
         <div className="md:col-span-3">
           <ChatBox
             messages={messages}
-            currentUserId={MOCK_USER.id}
+            currentUserId={user?.id || ''}
             loading={loading}
             onSendMessage={sendMessage}
           />

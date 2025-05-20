@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { SendIcon, AlertCircleIcon } from "lucide-react";
+import { SendIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
@@ -34,6 +34,30 @@ export default function ChatBox({
   const [newMessage, setNewMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [errorState, setErrorState] = useState<boolean>(false);
+  const [recentMessages, setRecentMessages] = useState<Record<string, boolean>>({});
+
+  // Track new messages for animations
+  useEffect(() => {
+    if (messages.length > 0) {
+      const latestMessage = messages[messages.length - 1];
+      // Mark this message as recent (for animation)
+      setRecentMessages(prev => ({
+        ...prev,
+        [latestMessage.id]: true
+      }));
+      
+      // Remove the "recent" flag after the animation
+      const timerId = setTimeout(() => {
+        setRecentMessages(prev => {
+          const newState = { ...prev };
+          delete newState[latestMessage.id];
+          return newState;
+        });
+      }, 2000); // Animation duration
+      
+      return () => clearTimeout(timerId);
+    }
+  }, [messages.length]);
 
   // Scroll to bottom whenever messages change
   useEffect(() => {
@@ -75,6 +99,46 @@ export default function ChatBox({
     }
   };
 
+  // Format date for grouping messages by day
+  const formatDate = (timestamp: string): string => {
+    try {
+      const date = new Date(timestamp);
+      return date.toLocaleDateString();
+    } catch (e) {
+      return 'Unknown date';
+    }
+  };
+
+  // Group messages by date
+  const groupedMessages = useMemo(() => {
+    const groups: Record<string, Message[]> = {};
+    
+    messages.forEach(msg => {
+      const date = formatDate(msg.createdAt);
+      if (!groups[date]) {
+        groups[date] = [];
+      }
+      groups[date].push(msg);
+    });
+    
+    return groups;
+  }, [messages]);
+
+  // Generate date headers
+  const dateLabels = useMemo(() => {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    const formatToday = formatDate(today.toISOString());
+    const formatYesterday = formatDate(yesterday.toISOString());
+    
+    return {
+      [formatToday]: 'Today',
+      [formatYesterday]: 'Yesterday'
+    };
+  }, []);
+
   return (
     <Card className="flex flex-col h-[70vh] shadow-md">
       <CardHeader className="pb-3 border-b">
@@ -99,47 +163,61 @@ export default function ChatBox({
           </div>
         ) : messages.length > 0 ? (
           <div className="space-y-6">
-            {messages.map((msg, index) => {
-              const isCurrentUser = msg.sender === currentUserId;
-              const showSender = index === 0 || messages[index - 1].sender !== msg.sender;
-              const senderDisplayName = msg.senderName || msg.sender;
-              const initials = getInitials(senderDisplayName);
+            {Object.entries(groupedMessages).map(([date, dateMessages]) => (
+              <div key={date} className="space-y-4">
+                <div className="text-center">
+                  <span className="px-2 py-1 bg-muted text-muted-foreground text-xs rounded-md">
+                    {dateLabels[date] || date}
+                  </span>
+                </div>
+                {dateMessages.map((msg, index) => {
+                  const isCurrentUser = msg.sender === currentUserId;
+                  const showSender = index === 0 || dateMessages[index - 1].sender !== msg.sender;
+                  const senderDisplayName = msg.senderName || msg.sender;
+                  const initials = getInitials(senderDisplayName);
+                  const isRecent = recentMessages[msg.id];
 
-              return (
-                <div 
-                  key={msg.id} 
-                  className={`flex flex-col ${isCurrentUser ? 'items-end' : 'items-start'}`}
-                >
-                  {showSender && (
-                    <div className={`flex items-center gap-2 mb-1 ${isCurrentUser ? 'flex-row-reverse' : ''}`}>
-                      <Avatar className="h-6 w-6 text-xs">
-                        <AvatarFallback className={isCurrentUser ? 'bg-primary text-primary-foreground' : 'bg-muted'}>
-                          {initials}
-                        </AvatarFallback>
-                      </Avatar>
-                      <span className="text-sm font-medium text-muted-foreground">
-                        {senderDisplayName}
-                      </span>
-                    </div>
-                  )}
-                  
-                  <div className={`flex items-end gap-2 ${isCurrentUser ? 'flex-row-reverse' : ''}`}>
+                  return (
                     <div 
-                      className={`px-4 py-2 rounded-lg max-w-[80%] ${
-                        isCurrentUser 
-                          ? 'bg-primary text-primary-foreground rounded-tr-none' 
-                          : 'bg-muted rounded-tl-none'
+                      key={msg.id} 
+                      className={`flex flex-col ${isCurrentUser ? 'items-end' : 'items-start'} ${
+                        isRecent ? 'animate-fade-in' : ''
                       }`}
                     >
-                      {msg.message}
+                      {showSender && (
+                        <div className={`flex items-center gap-2 mb-1 ${isCurrentUser ? 'flex-row-reverse' : ''}`}>
+                          <Avatar className="h-6 w-6 text-xs">
+                            <AvatarFallback className={isCurrentUser ? 'bg-primary text-primary-foreground' : 'bg-muted'}>
+                              {initials}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="text-sm font-medium text-muted-foreground">
+                            {senderDisplayName}
+                          </span>
+                        </div>
+                      )}
+                      
+                      <div className={`flex items-end gap-2 ${isCurrentUser ? 'flex-row-reverse' : ''}`}>
+                        <div 
+                          className={`px-4 py-2 rounded-lg max-w-[80%] ${
+                            isCurrentUser 
+                              ? 'bg-primary text-primary-foreground rounded-tr-none' 
+                              : 'bg-muted rounded-tl-none'
+                          } ${
+                            isRecent ? 'animate-pulse-light' : ''
+                          }`}
+                        >
+                          {msg.message}
+                        </div>
+                        <span className="text-xs text-muted-foreground">
+                          {formatTime(msg.createdAt)}
+                        </span>
+                      </div>
                     </div>
-                    <span className="text-xs text-muted-foreground">
-                      {formatTime(msg.createdAt)}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
+                  );
+                })}
+              </div>
+            ))}
             <div ref={messagesEndRef} />
           </div>
         ) : (
