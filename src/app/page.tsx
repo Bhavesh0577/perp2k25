@@ -5,12 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from 'next/link';
 import { RocketIcon, LightbulbIcon, NetworkIcon, UsersIcon, BarChart3Icon, MessageSquareIcon, ArrowRightIcon, CheckIcon, CodeIcon, StarIcon, HeartIcon } from 'lucide-react';
-import { useSession } from 'next-auth/react';
+import { useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function Home() {
-  const { data: session, status } = useSession();
+  const { isLoaded, isSignedIn, user } = useUser();
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [activeFeature, setActiveFeature] = useState(0);
@@ -29,13 +29,22 @@ export default function Home() {
 
   // If the user is not authenticated, redirect to sign in
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/auth/signin');
+    if (isLoaded && !isSignedIn) {
+      // With Clerk we don't need to redirect, as the SignIn component will handle this
+      // The user will be able to sign in via the UI
     }
-  }, [status, router]);
+  }, [isLoaded, isSignedIn, router]);
+
+  // Handler for generate idea button that checks authentication
+  const handleGenerateIdea = (e) => {
+    if (!isSignedIn) {
+      e.preventDefault();
+      router.push('/sign-in');
+    }
+  };
 
   // Show loading state while checking authentication
-  if (status === 'loading') {
+  if (!isLoaded) {
     return (
       <div className="container mx-auto py-10 px-4">
         <div className="max-w-4xl mx-auto">
@@ -60,42 +69,42 @@ export default function Home() {
       icon: <LightbulbIcon className="h-10 w-10" />,
       title: "Generate Ideas",
       description: "Create innovative hackathon project ideas using AI assistance.",
-      link: "/generate-idea",
+      link: isSignedIn ? "/generate-idea" : "/sign-in",
       cta: "Generate Now"
     },
     {
       icon: <NetworkIcon className="h-10 w-10" />,
       title: "Create Flowcharts",
       description: "Visualize your project's architecture and data flow with interactive diagrams.",
-      link: "/idea",
+      link: isSignedIn ? "/idea" : "/sign-in",
       cta: "View Saved Ideas"
     },
     {
       icon: <BarChart3Icon className="h-10 w-10" />,
       title: "Analyze Projects",
       description: "Get competitive analysis of your project compared to past winners.",
-      link: "/analysis",
+      link: isSignedIn ? "/analysis" : "/sign-in",
       cta: "Analyze Project"
     },
     {
       icon: <UsersIcon className="h-10 w-10" />,
       title: "Team Formation",
       description: "Find teammates with complementary skills for your project.",
-      link: "/team",
+      link: isSignedIn ? "/team" : "/sign-in",
       cta: "Find Team"
     },
     {
       icon: <MessageSquareIcon className="h-10 w-10" />,
       title: "Team Chat",
       description: "Collaborate in real-time with your team members.",
-      link: "/team/chat",
+      link: isSignedIn ? "/team/chat" : "/sign-in",
       cta: "Start Chatting"
     },
     {
       icon: <RocketIcon className="h-10 w-10" />,
       title: "Hackathon Finder",
       description: "Discover upcoming hackathons that match your interests.",
-      link: "/finder",
+      link: isSignedIn ? "/finder" : "/sign-in",
       cta: "Find Hackathons"
     }
   ];
@@ -153,8 +162,8 @@ export default function Home() {
               </div>
               <div className={`transition-all duration-700 delay-300 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button size="lg" className="h-12 px-6 text-base group relative overflow-hidden" asChild>
-                    <Link href="/generate-idea">
+                  <Button size="lg" className="h-12 px-6 text-base group relative overflow-hidden" onClick={handleGenerateIdea} asChild>
+                    <Link href={isSignedIn ? "/generate-idea" : "/sign-in"}>
                       <span className="relative z-10 flex items-center">
                         Generate Your Idea
                         <ArrowRightIcon className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
@@ -162,8 +171,8 @@ export default function Home() {
                       <span className="absolute inset-0 bg-gradient-to-r from-primary to-primary/80 dark:from-primary dark:to-primary/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
                     </Link>
                   </Button>
-                  <Button variant="outline" size="lg" className="h-12 px-6 text-base border-primary/20 dark:border-primary/20 group relative overflow-hidden" asChild>
-                    <Link href="/idea">
+                  <Button variant="outline" size="lg" className="h-12 px-6 text-base border-primary/20 dark:border-primary/20 group relative overflow-hidden" onClick={isSignedIn ? undefined : handleGenerateIdea} asChild>
+                    <Link href={isSignedIn ? "/idea" : "/sign-in"}>
                       <span className="relative z-10">View Saved Ideas</span>
                       <span className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
                     </Link>

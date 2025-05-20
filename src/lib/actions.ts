@@ -66,7 +66,7 @@ export async function getIdeasAction(userId?: string) {
     try {
       // Build query with optional user filter
       let query = 'SELECT id, title, description, flowchart, user_id, created_at FROM hackathon_ideas';
-      const queryParams = [];
+      const queryParams: string[] = [];
       
       if (userId) {
         query += ' WHERE user_id = $1';

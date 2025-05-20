@@ -65,7 +65,7 @@ const StructuredIdea = ({ ideaText }: StructuredIdeaProps) => {
       <h1 className="text-2xl font-bold text-primary mt-4 mb-2" {...props} />
     ),
     h2: ({ node, ...props }: any) => (
-      <h2 className="text-xl font-semibold text-primary-700 mt-4 mb-2" {...props} />
+      <h2 className="text-xl font-semibold text-primary-700 dark:text-primary-300 mt-4 mb-2" {...props} />
     ),
     h3: ({ node, ...props }: any) => (
       <h3 className="text-lg font-medium mt-3 mb-1" {...props} />
@@ -80,7 +80,7 @@ const StructuredIdea = ({ ideaText }: StructuredIdeaProps) => {
       <li className="my-1" {...props} />
     ),
     p: ({ node, ...props }: any) => (
-      <p className="my-2" {...props} />
+      <p className="my-2 text-foreground" {...props} />
     ),
     strong: ({ node, ...props }: any) => (
       <strong className="font-semibold" {...props} />
@@ -92,15 +92,15 @@ const StructuredIdea = ({ ideaText }: StructuredIdeaProps) => {
     <div className="space-y-4">
       {sections.title && (
         <div className="flex justify-center">
-          <h1 className="text-2xl font-bold text-center">{sections.title}</h1>
+          <h1 className="text-2xl font-bold text-center text-foreground">{sections.title}</h1>
         </div>
       )}
 
       {/* Project Overview */}
       {sections.overview && (
-        <div className="rounded-md bg-blue-50 p-4 border border-blue-100">
-          <h2 className="text-lg font-semibold text-blue-700 mb-2">Project Overview</h2>
-          <div className="prose prose-sm max-w-none">
+        <div className="rounded-md bg-blue-50 dark:bg-blue-950 p-4 border border-blue-100 dark:border-blue-900">
+          <h2 className="text-lg font-semibold text-blue-700 dark:text-blue-300 mb-2">Project Overview</h2>
+          <div className="prose prose-sm max-w-none dark:prose-invert">
             <ReactMarkdown components={markdownComponents} remarkPlugins={[remarkGfm]}>
               {sections.overview}
             </ReactMarkdown>
@@ -110,9 +110,9 @@ const StructuredIdea = ({ ideaText }: StructuredIdeaProps) => {
 
       {/* Project Description (if different from overview) */}
       {sections.description && (
-        <div className="rounded-md bg-purple-50 p-4 border border-purple-100">
-          <h2 className="text-lg font-semibold text-purple-700 mb-2">Project Description</h2>
-          <div className="prose prose-sm max-w-none">
+        <div className="rounded-md bg-purple-50 dark:bg-purple-950 p-4 border border-purple-100 dark:border-purple-900">
+          <h2 className="text-lg font-semibold text-purple-700 dark:text-purple-300 mb-2">Project Description</h2>
+          <div className="prose prose-sm max-w-none dark:prose-invert">
             <ReactMarkdown components={markdownComponents} remarkPlugins={[remarkGfm]}>
               {sections.description}
             </ReactMarkdown>
@@ -122,9 +122,9 @@ const StructuredIdea = ({ ideaText }: StructuredIdeaProps) => {
 
       {/* Key Features */}
       {sections.keyFeatures && (
-        <div className="rounded-md bg-emerald-50 p-4 border border-emerald-100">
-          <h2 className="text-lg font-semibold text-emerald-700 mb-2">Key Features</h2>
-          <div className="prose prose-sm max-w-none">
+        <div className="rounded-md bg-emerald-50 dark:bg-emerald-950 p-4 border border-emerald-100 dark:border-emerald-900">
+          <h2 className="text-lg font-semibold text-emerald-700 dark:text-emerald-300 mb-2">Key Features</h2>
+          <div className="prose prose-sm max-w-none dark:prose-invert">
             <ReactMarkdown components={markdownComponents} remarkPlugins={[remarkGfm]}>
               {sections.keyFeatures}
             </ReactMarkdown>
@@ -134,9 +134,9 @@ const StructuredIdea = ({ ideaText }: StructuredIdeaProps) => {
 
       {/* Technology Stack */}
       {sections.techStack && (
-        <div className="rounded-md bg-amber-50 p-4 border border-amber-100">
-          <h2 className="text-lg font-semibold text-amber-700 mb-2">Technology Stack</h2>
-          <div className="prose prose-sm max-w-none">
+        <div className="rounded-md bg-amber-50 dark:bg-amber-950 p-4 border border-amber-100 dark:border-amber-900">
+          <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300 mb-2">Technology Stack</h2>
+          <div className="prose prose-sm max-w-none dark:prose-invert">
             <ReactMarkdown components={markdownComponents} remarkPlugins={[remarkGfm]}>
               {sections.techStack}
             </ReactMarkdown>
@@ -146,9 +146,9 @@ const StructuredIdea = ({ ideaText }: StructuredIdeaProps) => {
 
       {/* Development Milestones */}
       {sections.milestones && (
-        <div className="rounded-md bg-indigo-50 p-4 border border-indigo-100">
-          <h2 className="text-lg font-semibold text-indigo-700 mb-2">Development Milestones</h2>
-          <div className="prose prose-sm max-w-none">
+        <div className="rounded-md bg-indigo-50 dark:bg-indigo-950 p-4 border border-indigo-100 dark:border-indigo-900">
+          <h2 className="text-lg font-semibold text-indigo-700 dark:text-indigo-300 mb-2">Development Milestones</h2>
+          <div className="prose prose-sm max-w-none dark:prose-invert">
             <ReactMarkdown components={markdownComponents} remarkPlugins={[remarkGfm]}>
               {sections.milestones}
             </ReactMarkdown>
@@ -158,9 +158,9 @@ const StructuredIdea = ({ ideaText }: StructuredIdeaProps) => {
 
       {/* Challenges and Solutions */}
       {sections.challenges && (
-        <div className="rounded-md bg-rose-50 p-4 border border-rose-100">
-          <h2 className="text-lg font-semibold text-rose-700 mb-2">Challenges & Solutions</h2>
-          <div className="prose prose-sm max-w-none">
+        <div className="rounded-md bg-rose-50 dark:bg-rose-950 p-4 border border-rose-100 dark:border-rose-900">
+          <h2 className="text-lg font-semibold text-rose-700 dark:text-rose-300 mb-2">Challenges & Solutions</h2>
+          <div className="prose prose-sm max-w-none dark:prose-invert">
             <ReactMarkdown components={markdownComponents} remarkPlugins={[remarkGfm]}>
               {sections.challenges}
             </ReactMarkdown>
@@ -170,7 +170,7 @@ const StructuredIdea = ({ ideaText }: StructuredIdeaProps) => {
 
       {/* If no sections were found, render the full content */}
       {Object.values(sections).every(section => !section) && (
-        <div className="prose prose-sm max-w-none">
+        <div className="prose prose-sm max-w-none dark:prose-invert">
           <ReactMarkdown components={markdownComponents} remarkPlugins={[remarkGfm]}>
             {ideaText}
           </ReactMarkdown>

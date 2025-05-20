@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from 'next/navigation';
-import { useSession, signOut } from 'next-auth/react';
-import { RocketIcon, UsersIcon, SearchIcon, SparklesIcon, BarChartIcon, MessageSquareIcon, LogOutIcon, LogInIcon, UserIcon } from 'lucide-react';
+import { useUser, useClerk, SignInButton, UserButton } from '@clerk/nextjs';
+import { RocketIcon, UsersIcon, SearchIcon, SparklesIcon, BarChartIcon, MessageSquareIcon, LogOutIcon, LogInIcon, UserIcon, XIcon } from 'lucide-react';
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,9 +18,12 @@ import {
 
 export default function Navbar() {
   const pathname = usePathname();
-  const { data: session, status } = useSession();
+  const { isLoaded, isSignedIn, user } = useUser();
+  const { signOut } = useClerk();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   const isActive = (path: string) => {
+    if (!pathname) return false;
     return pathname === path || pathname.startsWith(path + '/');
   };
 
@@ -34,7 +37,7 @@ export default function Navbar() {
   ];
 
   const handleSignOut = () => {
-    signOut({ callbackUrl: '/' });
+    signOut();
   };
 
   return (
@@ -48,6 +51,7 @@ export default function Navbar() {
             </Link>
           </div>
 
+          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
             {navItems.map((item) => (
               <Link 
@@ -67,71 +71,69 @@ export default function Navbar() {
             <ThemeToggle />
             
             {/* Authentication UI */}
-            {status === 'loading' ? (
+            {!isLoaded ? (
               <div className="h-8 w-8 rounded-full bg-muted animate-pulse"></div>
-            ) : session?.user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={session.user.image || ''} alt={session.user.name || ''} />
-                      <AvatarFallback>{session.user.name?.charAt(0) || 'U'}</AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
-                  <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">{session.user.name}</p>
-                      <p className="text-xs leading-none text-muted-foreground">
-                        {session.user.email}
-                      </p>
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link href="/profile">
-                      <UserIcon className="mr-2 h-4 w-4" />
-                      <span>Profile</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleSignOut}>
-                    <LogOutIcon className="mr-2 h-4 w-4" />
-                    <span>Log out</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+            ) : isSignedIn ? (
+              <UserButton />
             ) : (
-              <Button asChild variant="outline" size="sm">
-                <Link href="/auth/signin">
+              <SignInButton mode="modal">
+                <Button variant="outline" size="sm">
                   <LogInIcon className="mr-2 h-4 w-4" />
                   Sign In
-                </Link>
-              </Button>
+                </Button>
+              </SignInButton>
             )}
             
+            {/* Mobile Menu Button */}
             <div className="md:hidden">
-              {/* Mobile menu hamburger - can be expanded in future */}
-              <button className="p-2">
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  className="h-6 w-6" 
-                  fill="none" 
-                  viewBox="0 0 24 24" 
-                  stroke="currentColor"
-                >
-                  <path 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    strokeWidth={2} 
-                    d="M4 6h16M4 12h16M4 18h16" 
-                  />
-                </svg>
+              <button 
+                className="p-2" 
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                aria-label="Toggle menu"
+              >
+                {mobileMenuOpen ? (
+                  <XIcon className="h-6 w-6" />
+                ) : (
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    className="h-6 w-6" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
+                  >
+                    <path 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      strokeWidth={2} 
+                      d="M4 6h16M4 12h16M4 18h16" 
+                    />
+                  </svg>
+                )}
               </button>
             </div>
           </div>
         </div>
+
+        {/* Mobile Navigation Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden py-4 border-t mt-3">
+            <div className="flex flex-col space-y-3">
+              {navItems.map((item) => (
+                <Link 
+                  key={item.path} 
+                  href={item.path}
+                  className={`flex items-center gap-2 p-2 rounded-md hover:bg-muted ${
+                    isActive(item.path) ? 'text-primary bg-primary/5' : 'text-foreground'
+                  }`}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {item.icon}
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </nav>
   );

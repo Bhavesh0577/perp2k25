@@ -1,49 +1,48 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { Toaster } from "@/components/ui/sonner";
-import Navbar from "@/components/Navbar";
-import { ThemeProvider } from "@/components/theme-provider";
-import { Providers } from "./providers";
-import "./globals.css";
+import { type Metadata } from 'next'
+import { ClerkProvider } from '@clerk/nextjs'
+import { Geist, Geist_Mono } from 'next/font/google'
+import Navbar from '@/components/Navbar'
+import { ThemeProvider } from '@/components/theme-provider'
+import './globals.css'
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
+})
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
+})
 
 export const metadata: Metadata = {
-  title: "HackFlow - AI-Powered Hackathon Platform",
-  description: "Generate innovative hackathon ideas, visualize project flows, and track progress with AI tools.",
-};
+  title: 'HackFlow - AI-powered Hackathon Platform',
+  description: 'Generate ideas, create flowcharts, and collaborate on hackathon projects',
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Providers>
+    <ClerkProvider>
+      <html lang="en" suppressHydrationWarning>
+        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+            suppressHydrationWarning
+          >
             <Navbar />
             <main>
               {children}
             </main>
-            <Toaster />
-          </Providers>
-        </ThemeProvider>
-      </body>
-    </html>
-  );
+          </ThemeProvider>
+        </body>
+      </html>
+    </ClerkProvider>
+  )
 }

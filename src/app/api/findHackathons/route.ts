@@ -11,6 +11,7 @@ interface Hackathon {
   deadline: string;
   link: string;
   description: string;
+  mode: string;
 }
 
 export async function POST(request: NextRequest) {
@@ -29,7 +30,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate prompt for Perplexity
-    const prompt = `Find ongoing or upcoming hackathons related to ${interest}. Please return ONLY a valid JSON array of hackathon objects with these EXACT fields: title, theme, platform, deadline, link, description. Include platforms like Devpost, Devfolio, DoraHacks, and MLH. Give at least 10 available hackathons if available. Each object should have exactly these fields with string values. The response must be a valid JSON array without any additional text.`;
+    const prompt = `You are an expert hackathon aggregator. Find ongoing or upcoming hackathons specifically related to "${interest}". 
+    Search across major platforms such as Devpost, Devfolio, DoraHacks, and MLH, and include any other reputable sources. 
+    Return ONLY a valid JSON array of hackathon objects, where each object has EXACTLY these fields (all as strings): title, theme, platform, deadline, link, description and mode. 
+    Ensure each hackathon is currently open for registration or will open soon. 
+    Provide at least 10 relevant hackathons if possible, prioritizing diversity in platforms and themes. 
+    Do not include any explanation, markdown, or extra text—respond with a valid JSON array only, with no additional formatting or commentary.`;
 
     // Call Perplexity API if key is available
     if (PERPLEXITY_API_KEY) {

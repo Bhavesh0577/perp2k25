@@ -1,6 +1,6 @@
 'use client';
 
-import { CalendarIcon, ExternalLinkIcon, TagIcon } from 'lucide-react';
+import { CalendarIcon, EthernetPort, ExternalLinkIcon, TagIcon } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +13,7 @@ interface Hackathon {
   deadline: string;
   link: string;
   description: string;
+  mode: string;
 }
 
 interface HackathonCardProps {
@@ -72,6 +73,10 @@ export default function HackathonCard({ hackathon }: HackathonCardProps) {
             <div className="flex items-center text-sm text-muted-foreground">
               <TagIcon className="mr-2 h-4 w-4" />
               Theme: {hackathon.theme}
+            </div>
+            <div className="flex items-center text-sm text-muted-foreground">
+              <EthernetPort className="mr-2 h-4 w-4" />
+              Mode: {hackathon.mode}
             </div>
             <div className="flex items-center text-sm text-muted-foreground">
               <CalendarIcon className="mr-2 h-4 w-4" />

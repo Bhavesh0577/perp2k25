@@ -103,7 +103,7 @@ export default function FlowchartGenerationPage() {
             
             <TabsContent value="flowchart">
               <CardContent className="pt-6">
-                <div className="border rounded-md overflow-hidden mb-6 h-[500px]">
+                <div className="border rounded-md overflow-hidden mb-6 h-[600px]">
                   <FlowChart ideaText={idea.flowchart} />
                 </div>
               </CardContent>

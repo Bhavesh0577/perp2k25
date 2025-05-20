@@ -17,6 +17,7 @@ type Hackathon = {
   deadline: string;
   link: string;
   description: string;
+  mode: string;
 };
 
 export default function HackathonFinderPage() {
