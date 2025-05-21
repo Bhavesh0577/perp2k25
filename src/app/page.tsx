@@ -8,22 +8,22 @@ import { RocketIcon, LightbulbIcon, NetworkIcon, UsersIcon, BarChart3Icon, Messa
 import { useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
-
+import { Icons } from '@/components/icons';
 export default function Home() {
   const { isLoaded, isSignedIn, user } = useUser();
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [activeFeature, setActiveFeature] = useState(0);
   const [statsLoaded, setStatsLoaded] = useState(false);
-  
+
   useEffect(() => {
     setMounted(true);
-    
+
     // Start stats counter animation after a delay
     const timer = setTimeout(() => {
       setStatsLoaded(true);
     }, 500);
-    
+
     return () => clearTimeout(timer);
   }, []);
 
@@ -80,6 +80,13 @@ export default function Home() {
       cta: "View Saved Ideas"
     },
     {
+      icon: <Icons.search className="h-10 w-10" />,
+      title: "Resource Hub",
+      description: "Discover APIs, datasets, tools, and learning resources tailored to your project.",
+      link: isSignedIn ? "/resources" : "/sign-in",
+      cta: "Find Resources"
+    },
+    {
       icon: <BarChart3Icon className="h-10 w-10" />,
       title: "Analyze Projects",
       description: "Get competitive analysis of your project compared to past winners.",
@@ -126,22 +133,20 @@ export default function Home() {
       role: "Full Stack Developer"
     }
   ];
-
+  
   // Only render the original content if authenticated
   return (
     <div className="flex min-h-screen flex-col">
       <main className="flex-1">
-        {/* Hero Section with 3D elements */}
+        {}
         <section className="relative w-full py-20 md:py-32 overflow-hidden">
-          {/* Background layers */}
+          {}
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-background z-0"></div>
-          
-          {/* 3D-like floating elements */}
+          {}
           <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute top-1/4 right-0 w-72 h-72 bg-primary/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
           <div className="absolute -bottom-24 left-1/3 w-80 h-80 bg-primary/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-          
-          {/* Grid pattern */}
+          {}
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGw9IiMxODE4MTgiIGQ9Ik0wIDBoNjB2NjBIMHoiLz48cGF0aCBkPSJNMzYgMzBoLTJWMGgydjMwem0tMTAgMGgtMlYwaDF2MzB6bTIwIDBINDRWMGgxdjMwem0tMjAgMEgyNFYwaDJ2MzB6TTEyIDMwSDEwVjBoMnYzMHptMjAgMGgtMVYwaDF2MzB6TTIyIDMwaC0xVjBoMXYzMHptMjAgMGgtMlYwaDJ2MzB6IiBmaWxsPSIjMjkyOTI5IiBmaWxsLXJ1bGU9Im5vbnplcm8iIG9wYWNpdHk9Ii4yIi8+PHBhdGggZD0iTTYwIDMwSDMwVjBoMzB2MzB6IiBmaWxsPSIjMjkyOTI5IiBmaWxsLXJ1bGU9Im5vbnplcm8iIG9wYWNpdHk9Ii4xIi8+PC9nPjwvc3ZnPg==')] opacity-5 dark:opacity-[0.025]"></div>
 
           <div className="container relative z-10 px-4 md:px-6">
@@ -181,8 +186,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          
-          {/* Floating 3D cards */}
+          {}
           <div className={`container relative z-10 mt-16 transition-all duration-1000 delay-500 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}>
             <div className="flex gap-4 justify-center flex-wrap">
               {["AI-Powered", "Team-Based", "Interactive", "Data-Driven"].map((tag, i) => (
@@ -201,7 +205,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Stats Section */}
+        {}
         <section className="w-full py-16 md:py-20 border-y border-muted/10">
           <div className="container px-4 md:px-6">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -219,7 +223,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Features Section with Interactive Feature Tabs */}
+        {}
         <section className="w-full py-16 md:py-24 lg:py-32">
           <div className="container px-4 md:px-6">
             <div className="text-center mb-16">
@@ -231,7 +235,7 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Feature tabs navigation */}
+            {}
             <div className="relative mb-12">
               <div className="flex overflow-x-auto pb-4 scrollbar-hide space-x-2 justify-center">
                 {features.map((feature, i) => (
@@ -254,12 +258,12 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Featured item detail with a glass card */}
+            {}
             <div className="mx-auto max-w-4xl">
               <div className="relative overflow-hidden rounded-xl border border-muted/20 dark:border-muted/10 bg-background/60 backdrop-blur-lg p-8 transition-all duration-500">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-60"></div>
                 <div className="absolute -top-40 -right-40 h-80 w-80 bg-primary/10 rounded-full blur-3xl"></div>
-                
+
                 <div className="relative flex flex-col md:flex-row gap-8 items-center">
                   <div className="md:w-1/3 flex-shrink-0">
                     <div className="aspect-square w-full max-w-[240px] mx-auto rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center text-primary">
@@ -293,8 +297,8 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            
-            {/* Feature cards */}
+            {}
+
             <div className="mx-auto max-w-[1200px] grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 mt-20">
               {features.map((feature, i) => (
                 <div 
@@ -328,7 +332,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Testimonials */}
+        {}
         <section className="w-full py-16 md:py-24 lg:py-32 bg-muted/10 dark:bg-muted/5">
           <div className="container px-4 md:px-6">
             <div className="text-center mb-16">
@@ -339,7 +343,7 @@ export default function Home() {
                 See what our users have to say about their experience
               </p>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {testimonials.map((testimonial, i) => (
                 <div 
@@ -367,15 +371,15 @@ export default function Home() {
           </div>
         </section>
 
-        {/* CTA Section with 3D Card */}
+        {}
         <section className="w-full py-16 md:py-24 lg:py-32">
           <div className="container px-4 md:px-6">
             <div className="mx-auto max-w-[900px] relative overflow-hidden rounded-2xl border border-primary/20 bg-background dark:bg-card p-8 md:p-12 shadow-xl transition-transform hover:shadow-primary/10 hover:-translate-y-1 duration-300">
-              {/* Decorative elements */}
+              {}
               <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent"></div>
               <div className="absolute -top-40 -right-40 h-80 w-80 bg-primary/10 rounded-full blur-3xl"></div>
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-primary/50 to-transparent"></div>
-              
+
               <div className="relative space-y-6 text-center">
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary mb-2">
                   <HeartIcon className="h-8 w-8" />
@@ -402,7 +406,7 @@ export default function Home() {
           </div>
         </section>
       </main>
-
+      
       <footer className="w-full border-t py-8">
         <div className="container px-4 md:px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">

@@ -1,7 +1,8 @@
-import { LucideProps, Loader2 } from "lucide-react"
-
+import { LucideProps, Loader2, Search, ExternalLink } from "lucide-react"
 export const Icons = {
   spinner: Loader2,
+  search: Search,
+  externalLink: ExternalLink,
   logo: (props: LucideProps) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"

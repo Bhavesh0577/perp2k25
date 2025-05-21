@@ -15,9 +15,9 @@ export async function GET(request: NextRequest) {
     // Add filter if user_id is provided
     if (userId) {
       queryText += ' WHERE user_id = $1';
-      queryParams.push(userId);
+      (queryParams as unknown[]).push(userId);
     }
-    
+
     // Sort by creation date descending
     queryText += ' ORDER BY created_at DESC';
     

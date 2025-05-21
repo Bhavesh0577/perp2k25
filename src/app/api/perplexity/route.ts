@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(request: NextRequest) {
   try {
     // Get API key from environment variables
-    const apiKey = process.env.PERPLEXITY_API_KEY || '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';
+    const apiKey = process.env.PERPLEXITY_API_KEY || '';
     
     if (!apiKey) {
       return NextResponse.json(
