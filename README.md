@@ -59,5 +59,5 @@ The database has a single table:
 - Tailwind CSS
 - Prisma ORM
 - PostgreSQL (via Supabase)
-- Mermaid.js
+- react flow
 - Perplexity API
