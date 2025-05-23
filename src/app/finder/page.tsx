@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
+import WithAuth from '@/components/auth/WithAuth';
 
 type Hackathon = {
   id: string;
@@ -68,6 +69,7 @@ export default function HackathonFinderPage() {
   const platforms = [...new Set(hackathons.map(h => h.platform))];
 
   return (
+    <WithAuth>
     <div className="container mx-auto py-10 px-4">
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight mb-2">Hackathon Finder</h1>
@@ -137,5 +139,6 @@ export default function HackathonFinderPage() {
         </Card>
       )}
     </div>
+    </WithAuth>
   );
 } 

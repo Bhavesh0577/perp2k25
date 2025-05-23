@@ -34,18 +34,27 @@ const availabilityOptions = [
 
 interface ProfileFormProps {
   onSubmit: (profile: TeamProfile & { id: string }) => void;
+  initialData?: {
+    name?: string;
+    email?: string;
+    role?: string;
+    techStack?: string;
+    skills?: string;
+    availability?: string[];
+    lookingFor?: string[];
+  };
 }
 
-export default function ProfileForm({ onSubmit }: ProfileFormProps) {
+export default function ProfileForm({ onSubmit, initialData }: ProfileFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<TeamProfile>({
-    name: '',
-    email: '',
-    role: '',
-    techStack: '',
-    skills: '',
-    availability: [],
-    lookingFor: []
+    name: initialData?.name || '',
+    email: initialData?.email || '',
+    role: initialData?.role || '',
+    techStack: initialData?.techStack || '',
+    skills: initialData?.skills || '',
+    availability: initialData?.availability || [],
+    lookingFor: initialData?.lookingFor || []
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -103,7 +112,7 @@ export default function ProfileForm({ onSubmit }: ProfileFormProps) {
   return (
     <Card className="w-full max-w-4xl mx-auto">
       <CardHeader>
-        <CardTitle>Create Your Team Profile</CardTitle>
+        <CardTitle>{initialData ? 'Update Your Profile' : 'Create Your Profile'}</CardTitle>
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-6">
@@ -198,12 +207,12 @@ export default function ProfileForm({ onSubmit }: ProfileFormProps) {
               {roles.map(role => (
                 <div key={role} className="flex items-center space-x-2">
                   <Checkbox
-                    id={`looking-for-${role}`}
+                    id={`looking-for-${role.replace(/\s+/g, '-').toLowerCase()}`}
                     checked={formData.lookingFor.includes(role)}
                     onCheckedChange={() => handleLookingForChange(role)}
                   />
                   <label
-                    htmlFor={`looking-for-${role}`}
+                    htmlFor={`looking-for-${role.replace(/\s+/g, '-').toLowerCase()}`}
                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     {role}
@@ -215,7 +224,7 @@ export default function ProfileForm({ onSubmit }: ProfileFormProps) {
         </CardContent>
         <CardFooter>
           <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? 'Saving...' : 'Save Profile & Find Teammates'}
+            {isSubmitting ? 'Saving...' : initialData ? 'Update Profile' : 'Create Profile'}
           </Button>
         </CardFooter>
       </form>

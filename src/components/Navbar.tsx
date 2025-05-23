@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from 'next/navigation';
 import { useUser, useClerk, SignInButton, UserButton } from '@clerk/nextjs';
-import { RocketIcon, UsersIcon, SearchIcon, SparklesIcon, BarChartIcon, MessageSquareIcon, LogOutIcon, LogInIcon, UserIcon, XIcon } from 'lucide-react';
+import { RocketIcon, UsersIcon, SearchIcon, SparklesIcon, BarChartIcon, MessageSquareIcon, LogOutIcon, LogInIcon, UserIcon, XIcon, ChevronsLeftRightEllipsis } from 'lucide-react';
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -31,6 +31,7 @@ export default function Navbar() {
     { label: 'Generate Idea', path: '/generate-idea', icon: <SparklesIcon className="h-4 w-4" /> },
     { label: 'Saved Ideas', path: '/idea', icon: <RocketIcon className="h-4 w-4" /> },
     { label: 'Analysis', path: '/analysis', icon: <BarChartIcon className="h-4 w-4" /> },
+    { label: 'Resources Hub', path: '/resources', icon: <ChevronsLeftRightEllipsis className="h-4 w-4" />},
     { label: 'Team Chat', path: '/team/chat', icon: <MessageSquareIcon className="h-4 w-4" /> },
     { label: 'Team Formation', path: '/team', icon: <UsersIcon className="h-4 w-4" /> },
     { label: 'Hackathon Finder', path: '/finder', icon: <SearchIcon className="h-4 w-4" /> },
@@ -69,19 +70,36 @@ export default function Navbar() {
 
           <div className="flex items-center gap-4">
             <ThemeToggle />
-            
-            {/* Authentication UI */}
+              {/* Authentication UI */}
             {!isLoaded ? (
               <div className="h-8 w-8 rounded-full bg-muted animate-pulse"></div>
             ) : isSignedIn ? (
-              <UserButton />
+              <div className="flex items-center gap-2">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <UserButton />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <Link href="/sign-out">
+                      <DropdownMenuItem>
+                        <LogOutIcon className="mr-2 h-4 w-4" />
+                        Sign Out
+                      </DropdownMenuItem>
+                    </Link>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             ) : (
-              <SignInButton mode="modal">
+              <Link href="/sign-in">
                 <Button variant="outline" size="sm">
                   <LogInIcon className="mr-2 h-4 w-4" />
                   Sign In
                 </Button>
-              </SignInButton>
+              </Link>
             )}
             
             {/* Mobile Menu Button */}

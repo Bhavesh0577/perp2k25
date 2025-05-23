@@ -86,7 +86,7 @@ export default function IdeaGenerationPage() {
   };
 
   return (
-    <WithAuth>
+    
       <div className="container mx-auto py-10 px-4">
         <div className="mb-8">
           <h1 className="text-3xl font-bold tracking-tight mb-2 text-foreground">Generate Project Idea</h1>
@@ -210,6 +210,6 @@ export default function IdeaGenerationPage() {
           </Tabs>
         </Card>
       </div>
-    </WithAuth>
+    
   );
 } 

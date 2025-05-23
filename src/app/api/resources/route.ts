@@ -64,7 +64,7 @@ Provide 3-5 highly relevant resources per category, focused on the project's spe
           'Authorization': `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          model: 'sonar-pro',
+          model: 'sonar-deep-research',
           messages: [
             {
               role: 'system',

@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BarChart3Icon, SparklesIcon, InfoIcon } from 'lucide-react';
+import WithAuth from '@/components/auth/WithAuth';
 
 export type AnalysisResult = {
   similarProjects: {
@@ -52,6 +53,7 @@ export default function AnalysisPage() {
   };
 
   return (
+    <WithAuth>
     <div className="container mx-auto py-10 px-4">
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight mb-2">Competitive Project Analysis</h1>
@@ -184,5 +186,6 @@ export default function AnalysisPage() {
         </TabsContent>
       </Tabs>
     </div>
+    </WithAuth>
   );
 } 

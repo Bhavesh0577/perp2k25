@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import WithAuth from '@/components/auth/WithAuth';
 
 export default function IdeasPage() {
   const [ideas, setIdeas] = useState<Idea[]>([]);
@@ -69,6 +70,7 @@ export default function IdeasPage() {
   };
 
   return (
+    <WithAuth>
     <div className="container mx-auto py-10 px-4">
       <div className="flex justify-between items-center mb-8">
         <div>
@@ -205,5 +207,6 @@ export default function IdeasPage() {
         </>
       )}
     </div>
+    </WithAuth>
   );
 } 

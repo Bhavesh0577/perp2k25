@@ -11,6 +11,7 @@ import FlowChart from '@/components/flowchart/FlowChart';
 import { Icons } from '@/components/icons';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import WithAuth from '@/components/auth/WithAuth';
 
 export default function FlowchartGenerationPage() {
   const [idea, setIdea] = useState<Idea | null>(null);
@@ -66,6 +67,7 @@ export default function FlowchartGenerationPage() {
   };
 
   return (
+    <WithAuth>
     <div className="container mx-auto py-10 px-4">
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight mb-2">Project Flowchart</h1>
@@ -150,5 +152,6 @@ export default function FlowchartGenerationPage() {
         </div>
       )}
     </div>
+    </WithAuth>
   );
 } 
