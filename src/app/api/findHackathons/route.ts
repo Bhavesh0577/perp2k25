@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
             'Authorization': `Bearer ${PERPLEXITY_API_KEY}`
           },
           body: JSON.stringify({
-            model: "sonar-pro",
+            model: "sonar-deep-research",
             messages: [{ role: "user", content: prompt }],
             temperature: 0.2,
           })
