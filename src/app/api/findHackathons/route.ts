@@ -34,8 +34,10 @@ export async function POST(request: NextRequest) {
     Search across major platforms such as Devpost, Devfolio, DoraHacks, and MLH, and include any other reputable sources. 
     Return ONLY a valid JSON array of hackathon objects, where each object has EXACTLY these fields (all as strings): title, theme, platform, deadline, link, description and mode. 
     Ensure each hackathon is currently open for registration or will open soon. 
+    Verify that the 'link' provided for each hackathon is accurate and directly leads to the hackathon's main page.
     Provide at least 10 relevant hackathons if possible, prioritizing diversity in platforms and themes. 
-    Do not include any explanation, markdown, or extra text—respond with a valid JSON array only, with no additional formatting or commentary.`;
+    Do not include any explanation, markdown, or extra text—respond with a valid JSON array only, with no additional formatting or commentary. The JSON format must be strictly adhered to.`;
+
 
     // Call Perplexity API if key is available
     if (PERPLEXITY_API_KEY) {
@@ -47,7 +49,7 @@ export async function POST(request: NextRequest) {
             'Authorization': `Bearer ${PERPLEXITY_API_KEY}`
           },
           body: JSON.stringify({
-            model: "sonar-deep-research",
+            model: "sonar-pro",
             messages: [{ role: "user", content: prompt }],
             temperature: 0.2,
           })
