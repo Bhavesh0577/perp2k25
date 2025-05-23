@@ -205,13 +205,3 @@ The database schema is managed by Prisma. Key models include:
 - `createdAt`: DateTime (default: now)
 
 _(Refer to `prisma/schema.prisma` for the most up-to-date and detailed schema information.)_
-
-## Team Members (Example)
-
-- [Your Name 1] - Role (e.g., Full-Stack Developer, AI Specialist)
-- [Your Name 2] - Role (e.g., Frontend Developer, UI/UX Designer)
-- _(Add other team members)_
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE.md](LICENSE.md) file for details (you would need to create this file if you choose MIT).
