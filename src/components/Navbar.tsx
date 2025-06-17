@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from 'next/navigation';
 import { useUser, useClerk, SignInButton, UserButton } from '@clerk/nextjs';
-import { RocketIcon, UsersIcon, SearchIcon, SparklesIcon, BarChartIcon, MessageSquareIcon, LogOutIcon, LogInIcon, UserIcon, XIcon, ChevronsLeftRightEllipsis } from 'lucide-react';
+import { RocketIcon, UsersIcon, SearchIcon, SparklesIcon, BarChartIcon, MessageSquareIcon, LogOutIcon, LogInIcon, UserIcon, XIcon, ChevronsLeftRightEllipsis, Globe, Brain, Target, DollarSign } from 'lucide-react';
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -35,6 +35,10 @@ export default function Navbar() {
     { label: 'Team Chat', path: '/team/chat', icon: <MessageSquareIcon className="h-4 w-4" /> },
     { label: 'Team Formation', path: '/team', icon: <UsersIcon className="h-4 w-4" /> },
     { label: 'Hackathon Finder', path: '/finder', icon: <SearchIcon className="h-4 w-4" /> },
+    { label: 'Global Collab', path: '/collaboration', icon: <Globe className="h-4 w-4" /> },
+    { label: 'AI Matching', path: '/ai-matching', icon: <Brain className="h-4 w-4" /> },
+    { label: 'Impact Tracker', path: '/sustainability', icon: <Target className="h-4 w-4" /> },
+    { label: 'Startup Launch', path: '/startup', icon: <DollarSign className="h-4 w-4" /> },
   ];
 
   const handleSignOut = () => {
@@ -53,17 +57,17 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden lg:flex items-center space-x-4">
             {navItems.map((item) => (
               <Link 
                 key={item.path} 
                 href={item.path}
-                className={`flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary ${
-                  isActive(item.path) ? 'text-primary' : 'text-muted-foreground'
+                className={`flex items-center gap-1 text-xs font-medium transition-colors hover:text-primary px-2 py-1 rounded ${
+                  isActive(item.path) ? 'text-primary bg-primary/10' : 'text-muted-foreground'
                 }`}
               >
                 {item.icon}
-                {item.label}
+                <span className="hidden xl:inline">{item.label}</span>
               </Link>
             ))}
           </div>
@@ -103,7 +107,7 @@ export default function Navbar() {
             )}
             
             {/* Mobile Menu Button */}
-            <div className="md:hidden">
+            <div className="lg:hidden">
               <button 
                 className="p-2" 
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -134,13 +138,13 @@ export default function Navbar() {
 
         {/* Mobile Navigation Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden py-4 border-t mt-3">
-            <div className="flex flex-col space-y-3">
+          <div className="lg:hidden py-4 border-t mt-3">
+            <div className="grid grid-cols-2 gap-2">
               {navItems.map((item) => (
                 <Link 
                   key={item.path} 
                   href={item.path}
-                  className={`flex items-center gap-2 p-2 rounded-md hover:bg-muted ${
+                  className={`flex items-center gap-2 p-2 rounded-md hover:bg-muted text-sm ${
                     isActive(item.path) ? 'text-primary bg-primary/5' : 'text-foreground'
                   }`}
                   onClick={() => setMobileMenuOpen(false)}
@@ -155,4 +159,4 @@ export default function Navbar() {
       </div>
     </nav>
   );
-} 
+}
