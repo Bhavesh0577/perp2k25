@@ -1,6 +1,6 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
-// Create a matcher for public routes
+
 const publicRoutes = createRouteMatcher([
   '/', 
   '/sign-in(.*)', 
